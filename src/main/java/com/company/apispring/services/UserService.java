@@ -1,8 +1,8 @@
 package com.company.apispring.services;
 
-import com.company.apispring.domain.User;
+import com.company.apispring.domain.UserCompany;
 
 public interface UserService {
 
-    User findById(Integer id);
+    UserCompany findById(Integer id);
 }

@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class User {
+public class UserCompany {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

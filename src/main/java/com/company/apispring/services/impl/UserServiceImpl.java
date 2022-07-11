@@ -4,6 +4,7 @@ import com.company.apispring.domain.UserCompany;
 import com.company.apispring.domain.dto.UserDTO;
 import com.company.apispring.domain.repositories.UserRepository;
 import com.company.apispring.services.UserService;
+import com.company.apispring.services.exceptions.DataIntegratyViolationException;
 import com.company.apispring.services.exceptions.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,21 @@ public class UserServiceImpl implements UserService {
         Optional<UserCompany> obj = repository.findById(id);
         return obj.orElseThrow(()-> new ObjectNotFoundException(("Objeto não encontrado!")));
     }
-
+    @Override
     public List<UserCompany> findAll() {
         return repository.findAll();
     }
 
     @Override
     public UserCompany create(UserDTO obj) {
+        findByEmail(obj);
         return repository.save(mapper.map(obj,UserCompany.class));
+    }
+
+    private void findByEmail(UserDTO obj) {
+        Optional<UserCompany> user = repository.findByEmail(obj.getEmail());
+        if(user.isPresent()){
+            throw new DataIntegratyViolationException("Email já cadastrado no sistema");
+        }
     }
 }

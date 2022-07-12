@@ -28,6 +28,7 @@ class UserServiceImplTest {
     public static final String PASSWORD = "123";
     public static final int INDEX = 0;
     public static final String EMAIL_JÁ_CADASTRADO_NO_SISTEMA = "Email já cadastrado no sistema";
+    public static final String OBJETO_NÃO_ENCONTRADO = "Objeto não encontrado";
     @InjectMocks
     private UserServiceImpl serviceMock;
     @Mock
@@ -58,13 +59,13 @@ class UserServiceImplTest {
 
     @Test
     void whenFindByIdReturnAnObjectNotFoundException() {
-        when(repositoryMock.findById(anyInt())).thenThrow(new ObjectNotFoundException("Objeto não encontrado"));
+        when(repositoryMock.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NÃO_ENCONTRADO));
 
         try{
             serviceMock.findById(ID);
         }catch (Exception ex) {
             assertEquals(ObjectNotFoundException.class, ex.getClass());
-            assertEquals("Objeto não encontrado",ex.getMessage());
+            assertEquals(OBJETO_NÃO_ENCONTRADO,ex.getMessage());
         }
     }
 
@@ -145,6 +146,17 @@ class UserServiceImplTest {
         doNothing().when(repositoryMock).deleteById(anyInt());
         serviceMock.delete(ID);
         verify(repositoryMock, times(1)).deleteById(anyInt());
+    }
+
+    @Test
+    void deleteWithObjectNotFoundException() {
+        when(repositoryMock.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NÃO_ENCONTRADO));
+        try {
+            serviceMock.delete(ID);
+        }catch (Exception ex) {
+            assertEquals(ObjectNotFoundException.class, ex.getClass());
+            assertEquals(OBJETO_NÃO_ENCONTRADO, ex.getMessage());
+        }
     }
 
     private void startUser() {

@@ -36,7 +36,7 @@ public class UserResource {
                 .ok()
                 .body(service.findAll()
                         .stream()
-                        .map(x -> mapper.map(x, UserDTO.class)).toList());
+                        .map(x -> mapper.map(x, UserDTO.class)).collect(Collectors.toList()));
     }
     @PostMapping
     public ResponseEntity<UserDTO> create(@RequestBody UserDTO obj) {

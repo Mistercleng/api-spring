@@ -3,18 +3,21 @@ package com.company.apispring.resources;
 import com.company.apispring.domain.UserCompany;
 import com.company.apispring.domain.dto.UserDTO;
 import com.company.apispring.services.impl.UserServiceImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Optional;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -66,11 +69,21 @@ class UserResourceTest {
         assertEquals(EMAIL, response.getBody().getEmail());
         assertEquals(PASSWORD, response.getBody().getPassword());
 
-
     }
 
     @Test
-    void findAll() {
+    void whenFindAllThenReturnAListOfUserDTO() {
+        when(serviceMock.findAll()).thenReturn(List.of(user));
+        when(mapper.map(any(), any())).thenReturn(userDTO);
+
+        ResponseEntity<List<UserDTO>> response = resourceMock.findAll();
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(ArrayList.class, response.getBody().getClass());
+        assertEquals(UserDTO.class, response.getBody().get(INDEX).getClass());
     }
 
     @Test

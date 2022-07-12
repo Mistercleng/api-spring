@@ -22,7 +22,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UserResourceTest {
@@ -104,12 +104,35 @@ class UserResourceTest {
     }
 
     @Test
-    void update() {
+    void whenUpdateThenReturnSuccess() {
+        when(serviceMock.update(userDTO)).thenReturn(user);
+        when(mapper.map(any(), any())).thenReturn(userDTO);
+
+        ResponseEntity<UserDTO> response = resourceMock.update(ID, userDTO);
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(UserDTO.class, response.getBody().getClass());
+
+        assertEquals(ID, response.getBody().getId());
+        assertEquals(NAME, response.getBody().getNome());
+        assertEquals(EMAIL, response.getBody().getEmail());
     }
 
     @Test
-    void delete() {
+    void whenDeleteThenReturnSuccess() {
+        doNothing().when(serviceMock).delete(anyInt());
+
+        ResponseEntity<UserDTO> response = resourceMock.delete(ID);
+
+        assertNotNull(response);
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(serviceMock, times(1)).delete(anyInt());
     }
+
 
     private void startUser() {
         user = new UserCompany(ID, NAME, EMAIL, PASSWORD);
